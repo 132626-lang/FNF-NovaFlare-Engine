@@ -33,7 +33,7 @@ class AudioGroup extends OptionCata
         var option:Option = new Option(this, 'optionMusic', STRING, OptionMusicArray);
         addOption(option);
 
-        var PauseMusicArray:Array<String> = ['None', 'Breakfast', 'Tea Time'];
+        var PauseMusicArray:Array<String> = ['None', 'Breakfast', 'Tea Time', 'Tea Time Legacy'];
         for (folder in Mods.directoriesWithFile(Paths.getSharedPath(), 'music/Pause', true)) {
             for (file in FileSystem.readDirectory(folder)) {
                 if (file.endsWith('.ogg')) {

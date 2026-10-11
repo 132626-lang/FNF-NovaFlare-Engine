@@ -5,11 +5,13 @@ import flixel.util.FlxAxes;
 class ConfirmationPopupSubstate extends MusicBeatSubstate
 {
 	var bg:FlxSprite;
-	var finishCallback:Void->Void;
+	var onExit:Void->Void;
+	var onCancel:Void->Void;
 
-	public function new(finishCallback:Void->Void = null)
+	public function new(?onExit:Void->Void = null, ?onCancel:Void->Void = null)
 	{
-		this.finishCallback = finishCallback;
+		this.onExit = onExit;
+		this.onCancel = onCancel;
 		super();
 	}
 
@@ -36,10 +38,15 @@ class ConfirmationPopupSubstate extends MusicBeatSubstate
 		var btn:PsychUIButton = new PsychUIButton(0, btnY, 'Exit', function()
 		{
 			FlxG.mouse.visible = false;
-			MusicBeatState.switchState(new developer.editors.MasterEditorMenu());
-			FlxG.sound.playMusic(Paths.music('freakyMenu'));
-			if (finishCallback != null)
-				finishCallback();
+			if (onExit != null)
+			{
+				onExit();
+			}
+			else
+			{
+				MusicBeatState.switchState(new developer.editors.MasterEditorMenu());
+				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+			}
 		});
 		btn.normalStyle.bgColor = FlxColor.RED;
 		btn.normalStyle.textColor = FlxColor.WHITE;
@@ -48,7 +55,12 @@ class ConfirmationPopupSubstate extends MusicBeatSubstate
 		btn.cameras = cameras;
 		add(btn);
 
-		var btn:PsychUIButton = new PsychUIButton(0, btnY, 'Cancel', function() close());
+		var btn:PsychUIButton = new PsychUIButton(0, btnY, 'Cancel', function()
+		{
+			if (onCancel != null)
+				onCancel();
+			close();
+		});
 		btn.screenCenter(X);
 		btn.x += 100;
 		btn.cameras = cameras;

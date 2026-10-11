@@ -59,6 +59,7 @@ class Cache {
 		'assets/shared/music/freakyMenu.$Paths.SOUND_EXT',
 		'assets/shared/music/breakfast.$Paths.SOUND_EXT',
 		'assets/shared/music/tea-time.$Paths.SOUND_EXT',
+		'assets/shared/music/tea-time-legacy.$Paths.SOUND_EXT',
 	];
 
 	public static function setFrame(key:String, data:{graphic:FlxGraphic, frame:FlxFramesCollection})

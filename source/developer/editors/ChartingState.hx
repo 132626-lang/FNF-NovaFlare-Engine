@@ -1888,6 +1888,8 @@ class ChartingState extends MusicBeatState
 	var nowMoveNote = null;
 	var timeCheck:Bool = false;
 
+	var freePlace:Bool = false;
+
 	override function update(elapsed:Float)
 	{
 		curStep = recalculateSteps();
@@ -1943,6 +1945,21 @@ class ChartingState extends MusicBeatState
 			else
 			{
 				noteMove = true;
+			}
+		}
+
+		if (controls.mobileC && virtualPad.buttonF != null)
+		{
+			if (virtualPad.buttonF.justPressed)
+			{
+				freePlace = !freePlace;
+			}
+
+			var freePlaceColor:Int = freePlace ? 0x00E436 : 0x4A35B9;
+			if (virtualPad.buttonF.saveColor != freePlaceColor)
+			{
+				virtualPad.buttonF.saveColor = freePlaceColor;
+				virtualPad.buttonF.color = freePlaceColor;
 			}
 		}
 
@@ -2006,7 +2023,7 @@ class ChartingState extends MusicBeatState
 							&& touch.y < gridBG.y + (GRID_SIZE * getSectionBeats() * 4) * zoomList[curZoom])
 						{
 							FlxG.log.add('added note');
-							addNote();
+							addNote(null, Math.floor((touch.getWorldPosition(FlxG.camera).x - GRID_SIZE) / GRID_SIZE));
 						}
 					}
 				}
@@ -2018,7 +2035,7 @@ class ChartingState extends MusicBeatState
 				{
 					dummyArrow.visible = true;
 					dummyArrow.x = Math.floor(touch.x / GRID_SIZE) * GRID_SIZE;
-					if (FlxG.keys.pressed.SHIFT || virtualPad.buttonY.pressed)
+					if (freePlace || FlxG.keys.pressed.SHIFT || virtualPad.buttonY.pressed)
 						dummyArrow.y = touch.y;
 					else
 						dummyArrow.y = Math.floor(touch.y / GRID_SIZE) * GRID_SIZE;
@@ -2227,18 +2244,7 @@ class ChartingState extends MusicBeatState
 
 			if (FlxG.keys.justPressed.BACKSPACE || virtualPad.buttonB.justPressed)
 			{
-				// Protect against lost data when quickly leaving the chart editor.
-				autosaveSong();
-				PlayState.chartingMode = false;
-				if (!isFreePlay)
-					MusicBeatState.switchState(new developer.editors.MasterEditorMenu());
-				else
-				{
-					MusicBeatState.switchState(new states.freeplayState.FreeplayState());
-				}
-				isFreePlay = false;
-				FlxG.sound.playMusic(Paths.music('freakyMenu'));
-				FlxG.mouse.visible = false;
+				openSubState(new ConfirmationPopupSubstate(exitChartEditor));
 				return;
 			}
 
@@ -3697,6 +3703,21 @@ class ChartingState extends MusicBeatState
 			"song": _song
 		});
 		FlxG.save.flush();
+	}
+
+	function exitChartEditor():Void
+	{
+		autosaveSong();
+		PlayState.chartingMode = false;
+		if (!isFreePlay)
+			MusicBeatState.switchState(new developer.editors.MasterEditorMenu());
+		else
+		{
+			MusicBeatState.switchState(new states.freeplayState.FreeplayState());
+		}
+		isFreePlay = false;
+		FlxG.sound.playMusic(Paths.music('freakyMenu'));
+		FlxG.mouse.visible = false;
 	}
 
 	function clearEvents()

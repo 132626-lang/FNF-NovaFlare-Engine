@@ -119,30 +119,16 @@ class PauseSubState extends MusicBeatSubstate
 			{
 				if (songName == null)
 				{
-					var path:String;
-					if (ClientPrefs.data.pauseMusic == 'none'
-						|| ClientPrefs.data.pauseMusic == 'Breakfast'
-						|| ClientPrefs.data.pauseMusic == 'Tea Time')
-					{
-						path = Paths.formatToSongPath(ClientPrefs.data.pauseMusic);
-					}
-					else
-					{
-						path = Paths.formatToSongPath('Pause Screen/' + ClientPrefs.data.pauseMusic);
-					}
+					var formattedPauseMusic:String = Paths.formatToSongPath(ClientPrefs.data.pauseMusic);
+					var directMusicOptions:Array<String> = ['none', 'breakfast', 'tea-time', 'tea-time-legacy'];
+
+					var path:String = directMusicOptions.contains(formattedPauseMusic)
+						? formattedPauseMusic
+						: Paths.formatToSongPath('Pause Screen/' + ClientPrefs.data.pauseMusic);
 
 					if (path.toLowerCase() != 'none')
 					{
-						if (ClientPrefs.data.pauseMusic == 'none'
-							|| ClientPrefs.data.pauseMusic == 'Breakfast'
-							|| ClientPrefs.data.pauseMusic == 'Tea Time')
-						{
-							pauseMusic.loadEmbedded(Paths.music(Paths.formatToSongPath(ClientPrefs.data.pauseMusic)), true, true);
-						}
-						else
-						{
-							pauseMusic.loadEmbedded(Paths.music(Paths.formatToSongPath('Pause Screen/' + ClientPrefs.data.pauseMusic)), true, true);
-						}
+						pauseMusic.loadEmbedded(Paths.music(path), true, true);
 					}
 				}
 				else
