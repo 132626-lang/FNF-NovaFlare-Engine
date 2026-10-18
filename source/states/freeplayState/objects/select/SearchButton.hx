@@ -33,7 +33,8 @@ class SearchButton extends FlxSpriteGroup {
 			startSearch(cur);
 		}
 		search.unfocus = function() {
-			FreeplayState.instance.searchJustUnfocused = true;
+			if (FreeplayState.instance != null)
+				FreeplayState.instance.searchJustUnfocused = true;
 			if (search.text == '' || search.text == null) {
 				tapText.visible = true;
 				startSearch('');
@@ -70,6 +71,13 @@ class SearchButton extends FlxSpriteGroup {
 			if (onSearchChange != null)
 				onSearchChange(text);
 		});
+	}
+
+	public function cancelSearch() {
+		if (timer != null) {
+			timer.cancel();
+			timer = null;
+		}
 	}
 
 	public function changeLanguage() {

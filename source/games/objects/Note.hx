@@ -470,7 +470,7 @@ class Note extends FlxSprite
 
 			if (Cache.currentTrackedAnims.get(skin + skinPostfix) != null) {
 			    animation.copyFrom(Cache.currentTrackedAnims.get(skin + skinPostfix));
-            	setGraphicSize(Std.int(width * trackedScale));	//等下这都没改吗
+            	setGraphicSize(Std.int(frameWidth * trackedScale));
 				updateHitbox();
 			}
 			else loadNoteAnims();
@@ -572,7 +572,7 @@ class Note extends FlxSprite
 		// trace(width, ExtraKeysHandler.instance.data.scales[mania]);
 		
 		// 改为使用trackedScale设置大小
-		setGraphicSize(Std.int(width * trackedScale));
+		setGraphicSize(Std.int(frameWidth * trackedScale));
 
 		updateHitbox();
 	}

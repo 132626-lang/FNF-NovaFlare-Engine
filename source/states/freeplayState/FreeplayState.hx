@@ -962,6 +962,7 @@ class FreeplayState extends MusicBeatState
 				FlxG.sound.music.volume = instTargetVolume;
 				FlxG.sound.music.play();
 			}
+			refreshDetailTime(requestId, sourceDetailId);
 			return;
 		}
 
@@ -978,12 +979,7 @@ class FreeplayState extends MusicBeatState
 				FlxG.sound.music.volume = 0;
 				FlxG.sound.music.play();
 				FlxG.sound.music.fadeIn(audioFadeInTime, 0, instTargetVolume);
-				FlxTimer.wait(0.05, function():Void {
-					if (!isAudioRequestCurrent(requestId, sourceDetailId)
-						|| detailTimeText == null || FlxG.sound.music == null) return;
-					detailTimeText.text = DateTools.format(
-						Date.fromTime(FlxG.sound.music.length), "%M:%S");
-				});
+				refreshDetailTime(requestId, sourceDetailId);
 			};
 
 			try
@@ -1055,6 +1051,19 @@ class FreeplayState extends MusicBeatState
 	{
 		return !stateDestroyed && instance == this && requestId == audioSwitchId
 			&& (sourceDetailId < 0 || sourceDetailId == detailRequestId);
+	}
+
+	function refreshDetailTime(requestId:Int, sourceDetailId:Int, tries:Int = 0):Void
+	{
+		if (!isAudioRequestCurrent(requestId, sourceDetailId) || detailTimeText == null || FlxG.sound.music == null) return;
+
+		var songLength:Float = FlxG.sound.music.length;
+		if (songLength <= 0)
+		{
+			if (tries < 40) FlxTimer.wait(0.05, function() refreshDetailTime(requestId, sourceDetailId, tries + 1));
+			return;
+		}
+		detailTimeText.text = DateTools.format(Date.fromTime(songLength), "%M:%S");
 	}
 
 	function seedError(e:Dynamic, requestId:Int, selected:Int, difficulty:Int):Void {
@@ -1494,6 +1503,7 @@ class FreeplayState extends MusicBeatState
 			backgroundLoadTimer.cancel();
 			backgroundLoadTimer = null;
 		}
+		if (searchButton != null) searchButton.cancelSearch();
 		if (instance == this) instance = null;
 		super.destroy();
 		selectedBackgroundGraphic = null;
@@ -1520,6 +1530,8 @@ class FreeplayState extends MusicBeatState
 
 	public function startSearch(text:String)
 	{
+		if (stateDestroyed) return;
+
 		isSearchActive = (text != '');
 
 		if (!isSearchActive)

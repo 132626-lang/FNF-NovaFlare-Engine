@@ -393,8 +393,10 @@ class ClickEffect extends Sprite {
             circleBitmap.y = -circleOffsetY * scale;
         } else if (circleBitmap.visible) {
             circleBitmap.visible = false;
-            isComplete = true;
         }
+
+        if (!clickBitmap.visible && !circleBitmap.visible)
+            isComplete = true;
     }
     
     private function applyColor(bitmap:Bitmap, color:Int):Void {

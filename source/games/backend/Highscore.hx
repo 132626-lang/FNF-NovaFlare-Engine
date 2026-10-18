@@ -59,6 +59,7 @@ class Highscore
 			songPlayCount.set(daSong, songPlayCount.get(daSong) + 1);
 		else
 			songPlayCount.set(daSong, 1);
+		persistPlayCount();
 
 		if (songDetails.exists(daSong))
 		{
@@ -119,6 +120,13 @@ class Highscore
 			songPlayCount.set(daSong, songPlayCount.get(daSong) + 1);
 		else
 			songPlayCount.set(daSong, 1);
+		persistPlayCount();
+	}
+
+	static function persistPlayCount():Void
+	{
+		FlxG.save.data.songPlayCount = songPlayCount;
+		FlxG.save.flush();
 	}
 
 	////////////////////////////////////////////////////////////////////////
@@ -211,6 +219,11 @@ class Highscore
 		if (FlxG.save.data.songKeyHit != null)
 		{
 			songKeyHit = FlxG.save.data.songKeyHit;
+		}
+
+		if (FlxG.save.data.songPlayCount != null)
+		{
+			songPlayCount = FlxG.save.data.songPlayCount;
 		}
 	}
 	
