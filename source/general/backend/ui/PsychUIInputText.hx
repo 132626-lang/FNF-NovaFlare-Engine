@@ -733,12 +733,14 @@ class PsychUIInputText extends FlxSpriteGroup
 
 	override public function destroy()
 	{
-		_boundaries = null;
+		unfocus = null;
+		onChange = null;
 		if (focusOn == this)
 		{
-			focusOn = null;
+			@:bypassAccessor focusOn = null; //我直接一个雷霆设置看他怎么炸
 			_safeDisableTextInput();
 		}
+		_boundaries = null;
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 		Lib.application.window.onTextInput.remove(_handleTextInput);
 		Lib.application.window.onTextEdit.remove(_handleTextEditing);

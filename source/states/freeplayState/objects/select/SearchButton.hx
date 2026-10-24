@@ -80,6 +80,12 @@ class SearchButton extends FlxSpriteGroup {
 		}
 	}
 
+	override public function destroy() {
+		cancelSearch();
+		onSearchChange = null;
+		super.destroy();
+	}
+
 	public function changeLanguage() {
 		tapText.text = Language.get('tapToSearch', 'freeplay');
 		tapText.font = Paths.font(Language.get('fontName', 'main') + '.ttf');

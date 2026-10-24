@@ -56,6 +56,14 @@ class SearchButton extends FlxSpriteGroup
 		});
 	} 
 
+	override public function destroy() {
+		if (timer != null) {
+			timer.cancel();
+			timer = null;
+		}
+		super.destroy();
+	}
+
 	public function changeLanguage() {
 		tapText.text = Language.get('tapToSearch', 'options');
 		tapText.font = Paths.font(Language.get('fontName', 'main') + '.ttf');

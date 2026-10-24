@@ -713,7 +713,7 @@ class FreeplayState extends MusicBeatState
 					}
 				}
 				
-				if (controls.ACCEPT) 			
+				if (controls.ACCEPT && searchButton.onSearchChange == null) 			
 				{
 					if (curSelected != SongRect.openRect.id) {
 						songGroup[curSelected].changeSelectAll();
