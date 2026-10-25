@@ -1,0 +1,48 @@
+name: BF Build
+on:
+  workflow_dispatch:
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - name: Patch project
+        run: |
+          sed -i 's/title="NovaFlare Engine"/title="大肥鱼引擎"/' Project.xml
+          sed -i 's/file="NovaFlare Engine"/file="BigFish Engine"/' Project.xml
+          sed -i 's/com.NovaFlareEngineNew/com.bigfish.engine/g' Project.xml
+          sed -i 's/company="NF-crew"/company="BF-crew"/' Project.xml
+          grep -n '<app ' Project.xml
+      - uses: nttld/setup-ndk@main
+        id: ndk
+        with:
+          ndk-version: r28c
+      - uses: actions/setup-java@main
+        with:
+          distribution: zulu
+          java-version: '17'
+      - uses: krdlab/setup-haxe@master
+        with:
+          haxe-version: 4.3.7
+      - name: Install libs
+        run: |
+          haxelib setup ~/haxelib
+          haxelib --global git hmm https://github.com/NovaFlare-Engine-haxelib/hmm-3.1.0 70aca779a9d374a6e6b83c18715a3991a147ca37
+          haxelib --global run hmm install
+          haxelib run lime config ANDROID_SDK $ANDROID_HOME
+          haxelib run lime config ANDROID_NDK_ROOT $ANDROID_NDK_HOME
+          haxelib run lime config JAVA_HOME $JAVA_HOME
+          haxelib run lime config ANDROID_SETUP true
+      - name: Build
+        run: |
+          COMMIT_SHA=$(git rev-parse --short HEAD)
+          haxelib run lime build android -Dcommit_sha=$COMMIT_SHA -Dbuild_number=1
+      - name: Zip apk
+        run: |
+          cd export/release/android/bin/app/build/outputs/apk/release/
+          zip -r android.zip *.apk
+      - uses: actions/upload-artifact@main
+        with:
+          name: androidBuild
+          path: export/release/android/bin/app/build/outputs/apk/release/android.zip
+          if-no-files-found: error
