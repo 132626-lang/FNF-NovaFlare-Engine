@@ -65,13 +65,13 @@ class CustomFadeTransition extends FlxSubState
 
 			WaterMark = new FlxText(isTransIn ? 50 : -1230, 720 - 50 - 50 * 2, 0, '大肥鱼引擎 V' + MainMenuState.novaFlareEngineVersion, 50);
 			WaterMark.scrollFactor.set();
-			WaterMark.setFormat(Assets.getFont("assets/fonts/loadText.ttf").fontName, 50, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			WaterMark.setFormat(Assets.getFont("assets/fonts/Lang-ZH.ttf").fontName, 50, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			WaterMark.antialiasing = ClientPrefs.data.antialiasing;
 			add(WaterMark);
 
 			EventText = new FlxText(isTransIn ? 50 : -1230, 720 - 50 - 50, 0, 'LOADING . . . . . . ', 50);
 			EventText.scrollFactor.set();
-			EventText.setFormat(Assets.getFont("assets/fonts/loadText.ttf").fontName, 50, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			EventText.setFormat(Assets.getFont("assets/fonts/Lang-ZH.ttf").fontName, 50, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			EventText.antialiasing = ClientPrefs.data.antialiasing;
 			add(EventText);
 
@@ -186,13 +186,13 @@ class CustomFadeTransition extends FlxSubState
 
 			WaterMark = new FlxText(50, 720 - 50 - 50 * 2, 0, '大肥鱼引擎 V' + MainMenuState.novaFlareEngineVersion, 50);
 			WaterMark.scrollFactor.set();
-			WaterMark.setFormat(Assets.getFont("assets/fonts/loadText.ttf").fontName, 50, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			WaterMark.setFormat(Assets.getFont("assets/fonts/Lang-ZH.ttf").fontName, 50, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			WaterMark.antialiasing = ClientPrefs.data.antialiasing;
 			add(WaterMark);
 
 			EventText = new FlxText(50, 720 - 50 - 50, 0, 'LOADING . . . . . . ', 50);
 			EventText.scrollFactor.set();
-			EventText.setFormat(Assets.getFont("assets/fonts/loadText.ttf").fontName, 50, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			EventText.setFormat(Assets.getFont("assets/fonts/Lang-ZH.ttf").fontName, 50, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			EventText.antialiasing = ClientPrefs.data.antialiasing;
 			add(EventText);
 
