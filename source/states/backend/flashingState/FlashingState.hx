@@ -1,6 +1,7 @@
 package states.backend.flashingState;
 
 import lime.app.Application;
+import openfl.utils.Assets;
 
 import flixel.FlxSubState;
 import flixel.effects.FlxFlicker;
@@ -28,7 +29,7 @@ class FlashingState extends MusicBeatState
 		#end
 
 		warnText = new FlxText(0, 0, FlxG.width, guh, 32);
-		warnText.setFormat("VCR OSD Mono", 32, FlxColor.WHITE, CENTER);
+		warnText.setFormat(Assets.getFont("assets/fonts/Lang-ZH.ttf").fontName, 32, FlxColor.WHITE, CENTER);
 		warnText.screenCenter(Y);
 		add(warnText);
 
