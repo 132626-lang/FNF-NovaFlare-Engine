@@ -63,13 +63,13 @@ class CustomFadeTransition extends FlxSubState
 			loadLeft.setGraphicSize(FlxG.width, FlxG.height);
 			loadLeft.updateHitbox();
 
-			WaterMark = new FlxText(isTransIn ? 50 : -1230, 720 - 50 - 50 * 2, 0, 'BigFish Engine', 50);
+			WaterMark = new FlxText(isTransIn ? 50 : -1230, 720 - 50 - 50 * 4, 0, 'BigFish Engine\n长夜月制作\n等待加载中~', 50);
 			WaterMark.scrollFactor.set();
 			WaterMark.setFormat(Assets.getFont("assets/fonts/Lang-ZH.ttf").fontName, 50, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			WaterMark.antialiasing = ClientPrefs.data.antialiasing;
 			add(WaterMark);
 
-			EventText = new FlxText(isTransIn ? 50 : -1230, 720 - 50 - 50, 0, '长夜月制作\n等待加载中~', 50);
+			EventText = new FlxText(isTransIn ? 50 : -1230, 720 - 50 - 50, 0, '', 50);
 			EventText.scrollFactor.set();
 			EventText.setFormat(Assets.getFont("assets/fonts/Lang-ZH.ttf").fontName, 50, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			EventText.antialiasing = ClientPrefs.data.antialiasing;
@@ -184,13 +184,13 @@ class CustomFadeTransition extends FlxSubState
 			loadAlpha.setGraphicSize(FlxG.width, FlxG.height);
 			loadAlpha.updateHitbox();
 
-			WaterMark = new FlxText(50, 720 - 50 - 50 * 2, 0, 'BigFish Engine', 50);
+			WaterMark = new FlxText(50, 720 - 50 - 50 * 4, 0, 'BigFish Engine\n长夜月制作\n等待加载中~', 50);
 			WaterMark.scrollFactor.set();
 			WaterMark.setFormat(Assets.getFont("assets/fonts/Lang-ZH.ttf").fontName, 50, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			WaterMark.antialiasing = ClientPrefs.data.antialiasing;
 			add(WaterMark);
 
-			EventText = new FlxText(50, 720 - 50 - 50, 0, '长夜月制作\n等待加载中~', 50);
+			EventText = new FlxText(50, 720 - 50 - 50, 0, '', 50);
 			EventText.scrollFactor.set();
 			EventText.setFormat(Assets.getFont("assets/fonts/Lang-ZH.ttf").fontName, 50, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			EventText.antialiasing = ClientPrefs.data.antialiasing;
