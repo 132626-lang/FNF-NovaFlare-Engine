@@ -21,14 +21,10 @@ class FlashingState extends MusicBeatState
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		add(bg);
 
-		var guh:String = "Hey, watch out!\n
-		This Mod contains some flashing lights!\n
-		Press A/ENTER to disable them now or go to Options Menu.\n
-		Press B/ESCAPE to ignore this message.\n
-		You've been warned!";
+		var guh:String = "嘿，注意！\n这个模组有闪烁光效！\n按 A/回车 现在就关掉，或去设置菜单关。\n按 B/ESC 忽略这条提示。\n出了事别怪我没提醒你！";
 
 		#if desktop
-		guh += "\n\npress Keyboard will Disable touch control\n";
+		guh += "\n\n按键盘会关掉触屏控制\n";
 		#end
 
 		warnText = new FlxText(0, 0, FlxG.width, guh, 32);
