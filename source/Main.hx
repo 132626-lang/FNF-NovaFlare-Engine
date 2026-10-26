@@ -212,17 +212,7 @@ class Main extends Sprite
 		Controls.instance = new Controls();
 
 		#if android
-			if (AppData.getVersionName() != Application.current.meta.get('version')
-				|| AppData.getAppName() != Application.current.meta.get('file')                                                                                                                                                                                                                                                                                                                                                                                                                         || !AppData.verifySignature()
-				|| (AppData.getPackageName() != Application.current.meta.get('packageName')
-					&& AppData.getPackageName() != Application.current.meta.get('packageName') + 'Backup1' // 共存
-					&& AppData.getPackageName() != Application.current.meta.get('packageName') + 'Backup2' // 共存
-					&& AppData.getPackageName() != 'com.antutu.ABenchMark' // 超频测试 安兔
-					&& AppData.getPackageName() != 'com.ludashi.benchmark' // 超频测试 鲁大
-				)) {
-					FlxG.switchState(new PirateState());
-					return;
-				}
+			// 防盗版校验已由「大肥鱼引擎」移除（自用 fork，Apache-2.0）
 		#end
 
 		///////////////////////////////////////////   --包含有读取文件的别在这个的上面运
@@ -294,7 +284,7 @@ class Main extends Sprite
 	private function setupMobileStorage():Void
 	{
 		#if android
-		var defaultFolder:String = Application.current.meta.get('file');
+		var defaultFolder:String = "BigFish Engine";
 		var storageFolder:String = defaultFolder;
 
 		// Read saved storage folder preference from config file.
