@@ -270,8 +270,9 @@ class ChartCompat
 			speed: speed,
 			needsVoices: true,
 			format: 'psych_v1',
-			player1: (opponent != '' ? opponent : 'dad'),
-			player2: (player != '' ? player : 'bf'),
+			// Psych 约定：player1 = 玩家(bf)，player2 = 对手(dad)
+			player1: (player != '' ? player : 'bf'),
+			player2: (opponent != '' ? opponent : 'dad'),
 			gfVersion: (girlfriend != '' ? girlfriend : 'gf'),
 			stage: (stage != '' ? stage : 'stage'),
 			mania: 3,
