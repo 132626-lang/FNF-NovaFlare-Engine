@@ -83,6 +83,8 @@ class TitleState extends MusicBeatState
 	{
 		Paths.clearStoredMemory();
 		super.create();
+		// 大肥鱼引擎：能走到标题页 = 启动成功，撤掉看门狗标记
+		if (sys.FileSystem.exists('.bf_boot_guard')) sys.FileSystem.deleteFile('.bf_boot_guard');
 		GABridge.sendDesign("title:screen");
 		Paths.clearUnusedMemory();
 
