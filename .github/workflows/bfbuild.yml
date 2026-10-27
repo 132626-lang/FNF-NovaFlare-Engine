@@ -1,6 +1,8 @@
 name: BF Build
 on:
   workflow_dispatch:
+  push:
+    branches: [ bf-1.2.1 ]
 jobs:
   android:
     runs-on: ubuntu-latest
