@@ -1708,11 +1708,17 @@ class PlayState extends MusicBeatState
 		{
 			if (songData.needsVoices)
 			{
-				var playerVocals = Paths.voices(songData.song,
-					(boyfriend.vocalsFile == null || boyfriend.vocalsFile.length < 1) ? 'Player' : boyfriend.vocalsFile);
+				// 原生谱面（vslice）：metadata 给的 playerVocals / opponentVocals 优先
+				var pvSuffix:String = null;
+				if (songData.playerVocals != null && songData.playerVocals.length > 0) pvSuffix = songData.playerVocals[0];
+				if (pvSuffix == null) pvSuffix = (boyfriend.vocalsFile == null || boyfriend.vocalsFile.length < 1) ? 'Player' : boyfriend.vocalsFile;
+				var playerVocals = Paths.voices(songData.song, pvSuffix);
 				vocals.loadEmbedded(playerVocals != null ? playerVocals : Paths.voices(songData.song));
 
-				var oppVocals = Paths.voices(songData.song, (dad.vocalsFile == null || dad.vocalsFile.length < 1) ? 'Opponent' : dad.vocalsFile);
+				var ovSuffix:String = null;
+				if (songData.opponentVocals != null && songData.opponentVocals.length > 0) ovSuffix = songData.opponentVocals[0];
+				if (ovSuffix == null) ovSuffix = (dad.vocalsFile == null || dad.vocalsFile.length < 1) ? 'Opponent' : dad.vocalsFile;
+				var oppVocals = Paths.voices(songData.song, ovSuffix);
 				if (oppVocals != null)
 				{
 					opponentVocals.loadEmbedded(oppVocals);

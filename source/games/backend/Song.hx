@@ -34,6 +34,10 @@ typedef SwagSong =
 
 	@:optional var mania:Int;
 	@:optional var keyCount:Int;
+
+	// 原生谱面（vslice）给的人声 id：Voices-<id>.ogg
+	@:optional var playerVocals:Array<String>;
+	@:optional var opponentVocals:Array<String>;
 	@:optional var mapper:String;
 	@:optional var musican:String;
 }
@@ -226,11 +230,49 @@ class Song
 		#if MODS_ALLOWED
 		if (FileSystem.exists(_lastPath))
 			rawData = File.getContent(_lastPath);
-		else
 		#end
-		rawData = Assets.getText(_lastPath);
 
-		return rawData != null ? parseJSON(rawData, jsonInput) : null;
+		// ① 原生谱面（vslice / FNF 0.8+ / FNFC 目录）：data/songs/<歌>/<歌>-chart.json
+		if (rawData == null)
+		{
+			var nativeChart:ChartSource = ChartCompat.findChart(formattedFolder);
+			if (nativeChart != null)
+			{
+				var nativeMeta:Dynamic = ChartCompat.findMetadata(formattedFolder);
+				var nativeDiff:String = ChartCompat.difficultyOf(formattedFolder, formattedSong);
+				var chartJson:Dynamic = null;
+				try
+				{
+					chartJson = Json.parse(nativeChart.text);
+				}
+				catch (e:Dynamic)
+				{
+					trace('[BFChart] 原生谱面解析失败: ' + nativeChart.key);
+				}
+				if (chartJson != null && ChartCompat.isVSliceChart(chartJson))
+				{
+					detectedFormat = 'vslice';
+					chartEngineVersion = 'Pe-1.0.4';
+					_lastPath = nativeChart.path;
+					return ChartCompat.convert(chartJson, nativeMeta, nativeDiff, formattedFolder);
+				}
+			}
+		}
+
+		// ② 老路径（Psych）；里面装的是 vslice 谱也能认
+		if (rawData == null)
+		{
+			try
+			{
+				rawData = Assets.getText(_lastPath);
+			}
+			catch (e:Dynamic)
+			{
+				rawData = null;
+			}
+		}
+
+		return rawData != null ? parseJSON(rawData, jsonInput, 'psych_v1', formattedFolder) : null;
 	}
 
 	/**
@@ -241,9 +283,23 @@ class Song
 	 *   - Old format (0.7.x): { "song": {...} } without format field → auto-converted
 	 *   - Already converted: format "psych_v1_convert" → skip conversion
 	 */
-	public static function parseJSON(rawData:String, ?nameForError:String = null, ?convertTo:String = 'psych_v1'):SwagSong
+	public static function parseJSON(rawData:String, ?nameForError:String = null, ?convertTo:String = 'psych_v1', ?folder:String = null):SwagSong
 	{
 		var parsedJson:Dynamic = Json.parse(rawData);
+
+		// 原生 vslice 谱面放在 Psych 路径里（data/<歌>/<歌>.json）也认
+		if (ChartCompat.isVSliceChart(parsedJson))
+		{
+			detectedFormat = 'vslice';
+			chartEngineVersion = 'Pe-1.0.4';
+			var nativeMeta:Dynamic = null;
+			if (folder != null) nativeMeta = ChartCompat.findMetadata(Paths.formatToSongPath(folder));
+			else if (nameForError != null) nativeMeta = ChartCompat.findMetadata(Paths.formatToSongPath(nameForError));
+			var nativeDiff:String = (folder != null && nameForError != null) ? ChartCompat.difficultyOf(folder, nameForError) : '';
+			var nativeId:String = (folder != null) ? Paths.formatToSongPath(folder) : (nameForError != null ? Paths.formatToSongPath(nameForError) : 'song');
+			return ChartCompat.convert(parsedJson, nativeMeta, nativeDiff, nativeId);
+		}
+
 		var hasWrapper:Bool = Reflect.hasField(parsedJson, 'song');
 
 		if (hasWrapper)
