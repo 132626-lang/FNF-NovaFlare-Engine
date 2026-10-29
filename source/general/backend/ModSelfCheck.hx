@@ -120,7 +120,7 @@ class ModSelfCheck
 		try
 		{
 			if (!FileSystem.exists('logs')) FileSystem.createDirectory('logs');
-			var sb = new StringBuffer();
+			var sb = new StringBuf();
 			sb.add('大肥鱼引擎 · 模组自检  ' + Date.now().toString() + '\n');
 			sb.add('发现 ' + lines.length + ' 个可疑项\n\n');
 			for (l in lines) sb.add(l + '\n');
