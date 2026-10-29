@@ -39,7 +39,7 @@ class MainMenuState extends MusicBeatState
 {
 	public static var psychEngineVersion:String = '0.7.3'; // This is also used for Discord RPC
 	public static var novaFlareEngineDataVersion:Float = 4.0;
-	public static var novaFlareEngineVersion:String = '0.9.0';
+	public static var novaFlareEngineVersion:String = '0.9.1';
 	public static var novaFlareEngineCommit:String = 
 	    #if commit_sha
             haxe.macro.Compiler.getDefine("commit_sha");
@@ -81,6 +81,9 @@ class MainMenuState extends MusicBeatState
 	// var camFollow:FlxObject;
 	var SoundTime:Float = 0;
 	var BeatTime:Float = 0;
+
+	var musicBars:AudioDisplay;
+	var barColorTween:FlxTween;
 
 	var ColorArray:Array<Int> = [
 		0xFF9400D3,
@@ -144,9 +147,9 @@ class MainMenuState extends MusicBeatState
 		bg.antialiasing = ClientPrefs.data.antialiasing;
 		add(bg);
 
-		var test:AudioDisplay = new AudioDisplay(FlxG.sound.music, 0, FlxG.height, FlxG.width, Std.int(FlxG.height / 2), 100, 4, FlxColor.WHITE);
-		add(test);
-		test.alpha = 0.7;
+		musicBars = new AudioDisplay(FlxG.sound.music, 0, FlxG.height, FlxG.width, Std.int(FlxG.height / 2), 100, 4, FlxColor.WHITE);
+		add(musicBars);
+		musicBars.alpha = 0.7;
 
 		bg.scrollFactor.set(0, 0);
 
@@ -491,6 +494,14 @@ class MainMenuState extends MusicBeatState
 			currentColorAgain = currentColor - 1;
 			if (currentColorAgain <= 0)
 				currentColorAgain = 6;
+
+			// 底部频谱柱子随节拍七彩渐变（与暂停菜单边角同手感）
+			if (musicBars != null)
+			{
+				if (barColorTween != null)
+					barColorTween.cancel();
+				barColorTween = FlxTween.color(musicBars, 1.2, musicBars.color, ColorArray[currentColorAgain % ColorArray.length]);
+			}
 
 			logoBl.animation.play('bump');
 
