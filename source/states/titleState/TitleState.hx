@@ -92,7 +92,7 @@ class TitleState extends MusicBeatState
 			try
 			{
 				var __bfNotice:flixel.text.FlxText = new flixel.text.FlxText(12, FlxG.height - 96, FlxG.width - 24,
-					'安全模式：本次未加载任何模组（上次启动异常），再开一次就恢复', 22);
+					(general.backend.Mods.bfSuspectMod.length > 0 ? '安全模式：模组「' + general.backend.Mods.bfSuspectMod + '」疑似导致启动崩溃，本次已跳过它' : '安全模式：本次未加载任何模组（上次启动异常），再开一次就恢复'), 22);
 				__bfNotice.setFormat(Paths.font('vcr.ttf'), 22, flixel.util.FlxColor.YELLOW, 'left',
 					flixel.text.FlxTextBorderStyle.OUTLINE, flixel.util.FlxColor.BLACK);
 				__bfNotice.scrollFactor.set();

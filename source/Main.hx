@@ -320,9 +320,26 @@ class Main extends Sprite
 			var __bfGuard:String = storageDirectory + '.bf_boot_guard';
 			if (sys.FileSystem.exists(__bfGuard))
 			{
-				sys.io.File.saveContent('.bf_safe_mode', '上次启动未完成 ' + Date.now().toString());
-				trace('[BF] 上次启动异常 → 本次安全模式（不加载模组），下次启动自动恢复');
+				// 上次崩在哪个模组？读 .bf_suspect_mod（加载每个模组前写的）
+				var __bfWho:String = '';
+				try
+				{
+					if (sys.FileSystem.exists('.bf_suspect_mod'))
+						__bfWho = sys.io.File.getContent('.bf_suspect_mod').trim();
+				}
+				catch (__bfWe:Dynamic) {}
+				if (__bfWho.length > 0)
+				{
+					sys.io.File.saveContent('.bf_safe_mode', 'mod=' + __bfWho);
+					trace('[BF] 上次启动异常，可疑模组：' + __bfWho + ' → 本次只跳过它');
+				}
+				else
+				{
+					sys.io.File.saveContent('.bf_safe_mode', 'mod=');
+					trace('[BF] 上次启动异常，但不知道是哪个模组 → 本次跳过全部模组');
+				}
 			}
+			try { if (sys.FileSystem.exists('.bf_suspect_mod')) sys.FileSystem.deleteFile('.bf_suspect_mod'); } catch (__bfDe:Dynamic) {}
 			sys.io.File.saveContent(__bfGuard, 'booting');
 		}
 		catch (__bfE:Dynamic) { trace('[BF] guard error: ' + __bfE); }

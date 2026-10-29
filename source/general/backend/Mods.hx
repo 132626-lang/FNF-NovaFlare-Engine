@@ -11,7 +11,29 @@ typedef ModsList =
 
 class Mods
 {
-	static public var currentModDirectory:String = '';
+	static public var currentModDirectory(get, set):String = '';
+	static var _currentModDirectory:String = '';
+	// 正在加载的模组名 —— 崩溃后用它定位是哪个模组把启动搞崩了
+	public static var bfSuspectMod:String = '';
+	static var _bfLastWritten:String = '';
+
+	static function get_currentModDirectory():String
+	{
+		return _currentModDirectory;
+	}
+
+	static function set_currentModDirectory(v:String):String
+	{
+		_currentModDirectory = v;
+		#if (MODS_ALLOWED && sys)
+		if (v != null && v.length > 0 && v != _bfLastWritten)
+		{
+			_bfLastWritten = v;
+			try sys.io.File.saveContent('.bf_suspect_mod', v) catch (e:Dynamic) {}
+		}
+		#end
+		return v;
+	}
 	public static var ignoreModFolders:Array<String> = [
 		'characters',
 		'custom_events',
@@ -187,6 +209,10 @@ class Mods
 					bfSafeModeReason = sys.io.File.getContent(f);
 				}
 				catch (e:Dynamic) {}
+				if (bfSafeModeReason != null && StringTools.startsWith(bfSafeModeReason, 'mod='))
+					bfSuspectMod = bfSafeModeReason.substr(4).split('\n')[0].trim();
+				if (bfSuspectMod != null && bfSuspectMod.length > 0)
+					trace('[BF] 上次崩在模组：' + bfSuspectMod + '（本次只跳过它）');
 				sys.FileSystem.deleteFile(f); // 只生效这一次
 				trace("[BF] 安全模式：本次启动不加载模组（" + bfSafeModeReason + "）");
 			}
@@ -212,7 +238,9 @@ class Mods
 				list.all.push(dat[0]);
 				if (dat[1] == "1")
 				{
-					if (bfSafeMode) list.disabled.push(dat[0]);
+					var __isSuspect:Bool = bfSafeMode && bfSuspectMod.length > 0 && dat[0] == bfSuspectMod;
+					var __skipAll:Bool = bfSafeMode && bfSuspectMod.length == 0;
+					if (__isSuspect || __skipAll) list.disabled.push(dat[0]);
 					else list.enabled.push(dat[0]);
 				}
 				else
