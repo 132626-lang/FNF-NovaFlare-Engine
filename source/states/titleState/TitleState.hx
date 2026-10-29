@@ -84,7 +84,19 @@ class TitleState extends MusicBeatState
 		Paths.clearStoredMemory();
 		super.create();
 		// 大肥鱼引擎：能走到标题页 = 启动成功，撤掉看门狗标记
-		if (sys.FileSystem.exists('.bf_boot_guard')) sys.FileSystem.deleteFile('.bf_boot_guard');
+		// 能走到标题页 = 启动成功 → 撤掉看门狗标记（必须用绝对路径，相对路径会因 cwd 变化对不上）
+		try
+		{
+			var __bfRoot2:String = general.backend.Mods.bfStorageDir;
+			if (__bfRoot2 == null) __bfRoot2 = '';
+			var __bfG:String = __bfRoot2 + '.bf_boot_guard';
+			if (sys.FileSystem.exists(__bfG)) sys.FileSystem.deleteFile(__bfG);
+			var __bfC:String = __bfRoot2 + '.bf_crash_count';
+			if (sys.FileSystem.exists(__bfC)) sys.io.File.saveContent(__bfC, '0');
+			var __bfS:String = __bfRoot2 + '.bf_suspect_mod';
+			if (sys.FileSystem.exists(__bfS)) sys.FileSystem.deleteFile(__bfS);
+		}
+		catch (__bfTe:Dynamic) trace('[BF] guard clear error: ' + __bfTe);
 
 		// 安全模式提示（0.9.3）：上次启动异常时，本次没加载模组，告诉妈妈一声
 		if (general.backend.Mods.bfSafeMode)

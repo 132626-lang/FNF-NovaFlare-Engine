@@ -15,6 +15,8 @@ class Mods
 	static var _currentModDirectory:String = '';
 	// 正在加载的模组名 —— 崩溃后用它定位是哪个模组把启动搞崩了
 	public static var bfSuspectMod:String = '';
+	// 引擎数据目录（绝对路径，结尾带 /）—— 所有看门狗文件都用它拼，避免相对路径对不上
+	public static var bfStorageDir:String = '';
 	static var _bfLastWritten:String = '';
 
 	static function get_currentModDirectory():String
@@ -29,7 +31,7 @@ class Mods
 		if (v != null && v.length > 0 && v != _bfLastWritten)
 		{
 			_bfLastWritten = v;
-			try sys.io.File.saveContent('.bf_suspect_mod', v) catch (e:Dynamic) {}
+			try sys.io.File.saveContent(bfStorageDir + '.bf_suspect_mod', v) catch (e:Dynamic) {}
 		}
 		#end
 		return v;
@@ -200,7 +202,7 @@ class Mods
 		bfSafeModeReason = "";
 		try
 		{
-			var f:String = ".bf_safe_mode";
+			var f:String = bfStorageDir + ".bf_safe_mode";
 			if (sys.FileSystem.exists(f))
 			{
 				bfSafeMode = true;
