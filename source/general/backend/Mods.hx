@@ -182,7 +182,11 @@ class Mods
 			if (sys.FileSystem.exists(f))
 			{
 				bfSafeMode = true;
-				try bfSafeModeReason = sys.io.File.getContent(f) catch (e:Dynamic) {}
+				try
+				{
+					bfSafeModeReason = sys.io.File.getContent(f);
+				}
+				catch (e:Dynamic) {}
 				sys.FileSystem.deleteFile(f); // 只生效这一次
 				trace("[BF] 安全模式：本次启动不加载模组（" + bfSafeModeReason + "）");
 			}
