@@ -162,6 +162,33 @@ class Mods
 
 	public static var updatedOnState:Bool = false;
 
+
+	// ── 大肥鱼引擎 · 安全模式（启动看门狗升级版）────────────────────────
+	// 旧做法：上次启动没走完 → 把 modsList.txt 里所有模组改成 |0（永久禁用！）
+	//   → 在加载页被系统杀 / 内存不足 / 删标记失败，都会被误判成崩溃，
+	//     于是每次启动都把模组全禁掉（「不管崩没崩都禁模组」）。
+	// 新做法：崩溃后只在【本次启动】临时跳过模组，一行都不写 modsList.txt；
+	//   走到标题画面就算启动成功 → 删标记 → 下次启动自动恢复。
+	public static var bfSafeMode:Bool = false;
+	public static var bfSafeModeReason:String = "";
+
+	public static function bfConsumeSafeMode():Void
+	{
+		bfSafeMode = false;
+		bfSafeModeReason = "";
+		try
+		{
+			var f:String = ".bf_safe_mode";
+			if (sys.FileSystem.exists(f))
+			{
+				bfSafeMode = true;
+				try bfSafeModeReason = sys.io.File.getContent(f) catch (e:Dynamic) {}
+				sys.FileSystem.deleteFile(f); // 只生效这一次
+				trace("[BF] 安全模式：本次启动不加载模组（" + bfSafeModeReason + "）");
+			}
+		}
+		catch (e:Dynamic) trace("[BF] safe mode error: " + e);
+	}
 	inline public static function parseList():ModsList
 	{
 		if (!updatedOnState)
@@ -180,7 +207,10 @@ class Mods
 				var dat = mod.split("|");
 				list.all.push(dat[0]);
 				if (dat[1] == "1")
-					list.enabled.push(dat[0]);
+				{
+					if (bfSafeMode) list.disabled.push(dat[0]);
+					else list.enabled.push(dat[0]);
+				}
 				else
 					list.disabled.push(dat[0]);
 			}

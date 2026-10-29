@@ -85,6 +85,21 @@ class TitleState extends MusicBeatState
 		super.create();
 		// 大肥鱼引擎：能走到标题页 = 启动成功，撤掉看门狗标记
 		if (sys.FileSystem.exists('.bf_boot_guard')) sys.FileSystem.deleteFile('.bf_boot_guard');
+
+		// 安全模式提示（0.9.3）：上次启动异常时，本次没加载模组，告诉妈妈一声
+		if (general.backend.Mods.bfSafeMode)
+		{
+			try
+			{
+				var __bfNotice:flixel.text.FlxText = new flixel.text.FlxText(12, FlxG.height - 96, FlxG.width - 24,
+					'安全模式：本次未加载任何模组（上次启动异常），再开一次就恢复', 22);
+				__bfNotice.setFormat(Paths.font('vcr.ttf'), 22, flixel.util.FlxColor.YELLOW, 'left',
+					flixel.text.FlxTextBorderStyle.OUTLINE, flixel.util.FlxColor.BLACK);
+				__bfNotice.scrollFactor.set();
+				add(__bfNotice);
+			}
+			catch (__bfNe:Dynamic) trace('[BF] notice error: ' + __bfNe);
+		}
 		GABridge.sendDesign("title:screen");
 		Paths.clearUnusedMemory();
 
@@ -92,6 +107,25 @@ class TitleState extends MusicBeatState
 		Mods.pushGlobalMods();
 		#end
 		Mods.loadTopMod();
+
+		// 模组自检（0.9.3）：静态扫描「引用了但没创建的对象」等坑，结果写 logs/mod-selfcheck.txt
+		try
+		{
+			if (!sys.FileSystem.exists('.bf_skip_selfcheck'))
+			{
+				var __bfIssues = general.backend.ModSelfCheck.run();
+				if (__bfIssues.length > 0)
+				{
+					var __bfRep:flixel.text.FlxText = new flixel.text.FlxText(12, FlxG.height - 72, FlxG.width - 24,
+						'模组自检：' + __bfIssues.length + ' 个可疑项 → logs/mod-selfcheck.txt', 18);
+					__bfRep.setFormat(Paths.font('vcr.ttf'), 18, flixel.util.FlxColor.ORANGE, 'left',
+						flixel.text.FlxTextBorderStyle.OUTLINE, flixel.util.FlxColor.BLACK);
+					__bfRep.scrollFactor.set();
+					add(__bfRep);
+				}
+			}
+		}
+		catch (__bfScE:Dynamic) trace('[BF] selfcheck hook error: ' + __bfScE);
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 

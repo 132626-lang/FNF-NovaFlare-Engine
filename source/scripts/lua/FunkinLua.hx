@@ -1183,7 +1183,7 @@ class FunkinLua
 				var leSprite:ModchartSprite = new ModchartSprite(x, y);
 				if (image != null && image.length > 0)
 				{
-					if (ClientPrefs.data.moreLuaErrors)
+					if (true)
 					{
 						var graphic = Paths.image(image, null, null, disposeOnUpload);
 						if (graphic == null)
@@ -1214,7 +1214,7 @@ class FunkinLua
 				LuaUtils.resetSpriteTag(tag);
 				var leSprite:ModchartSprite = new ModchartSprite(x, y);
 
-				if (ClientPrefs.data.moreLuaErrors)
+				if (true)
 				{
 					if (image == null || image.length == 0 || Paths.image(image) == null)
 					{
@@ -1263,7 +1263,7 @@ class FunkinLua
 		});
 		set("addAnimationByPrefix", function(obj:String, name:String, prefix:String, framerate:Int = 24, loop:Bool = true)
 		{
-			if (ClientPrefs.data.moreLuaErrors)
+			if (true)
 			{
 				if (prefix == null)
 				{
@@ -1907,6 +1907,7 @@ class FunkinLua
 			if (resultStr != null && result != 0)
 			{
 				trace(resultStr);
+				bfWriteLuaLog("LOAD FAIL [$scriptName] " + resultStr);
 				#if (windows || mobile || js || wasm)
 				SUtil.showPopUp(resultStr, 'Error on lua script!');
 				#else
@@ -1957,7 +1958,7 @@ class FunkinLua
 				{
 					if (type > Lua.LUA_TNIL)
 					{
-						if (ClientPrefs.data.moreLuaErrors)
+						if (true)
 							reportRuntimeErrorOnce('lua-call-type:$func:$type',
 								'attempt to call a ${LuaUtils.typeToString(type)} value.');
 						else
@@ -1977,7 +1978,7 @@ class FunkinLua
 					if (status != Lua.LUA_OK)
 					{
 						var error:String = getErrorMessage(status);
-						if (ClientPrefs.data.moreLuaErrors)
+						if (true)
 							reportRuntimeErrorOnce('lua-runtime:$func:$error', error);
 						else
 							luaTrace("ERROR (" + func + "): " + error, false, false, FlxColor.RED);
@@ -2007,7 +2008,7 @@ class FunkinLua
 		catch (e:Dynamic)
 		{
 			trace(e);
-			if (ClientPrefs.data.moreLuaErrors)
+			if (true)
 				reportRuntimeErrorOnce('callback:$func:${Std.string(e)}', Std.string(e));
 			result = LuaUtils.Function_Continue;
 		}
@@ -2076,27 +2077,52 @@ class FunkinLua
 
 	public function reportRuntimeErrorOnce(key:String, message:String):Void
 	{
-		if (ClientPrefs.data.moreLuaErrors)
-		{
-			if (key == null || key.length == 0)
-				key = message;
-			if (reportedRuntimeErrors.exists(key))
-				return;
+		// 0.9.3：不再依赖「更多Lua报错」开关 —— 报错一律上屏 + 落盘，方便妈妈截图反馈
+		if (key == null || key.length == 0)
+			key = message;
 
-			reportedRuntimeErrors.set(key, true);
-		}
+		if (reportedRuntimeErrors.exists(key))
+			return;
+		reportedRuntimeErrors.set(key, true);
 
-		var callbackName:String = lastCalledFunction != null && lastCalledFunction.length > 0 ? lastCalledFunction : 'unknown callback';
-		var sourceName:String = scriptName != null && scriptName.length > 0 ? scriptName : 'unknown Lua script';
-		var errorText:String = 'ERROR ($callbackName) [$sourceName]: $message';
+		var callbackName:String = lastCalledFunction != null && lastCalledFunction.length > 0 ? lastCalledFunction : "unknown callback";
+		var sourceName:String = scriptName != null && scriptName.length > 0 ? scriptName : "unknown Lua script";
+		var errorText:String = "ERROR ($callbackName) [$sourceName]: $message";
 		if (PlayState.instance != null)
 			PlayState.instance.addTextToDebug(errorText, FlxColor.RED);
 		else
 			trace(errorText);
+		bfWriteLuaLog(errorText);
+	}
+
+	// ── 0.9.3 Lua 报错日志 ────────────────────────────────────────
+	public static var bfLogPath:String = null;
+
+	public static function bfWriteLuaLog(text:String):Void
+	{
+		#if sys
+		try
+		{
+			var dir:String = "logs";
+			if (!sys.FileSystem.exists(dir))
+				sys.FileSystem.createDirectory(dir);
+			if (bfLogPath == null)
+			{
+				var d:Date = Date.now();
+				bfLogPath = dir + "/lua-error-" + d.getFullYear() + "-" + StringTools.lpad(Std.string(d.getMonth() + 1), "0", 2)
+					+ "-" + StringTools.lpad(Std.string(d.getDate()), "0", 2) + ".txt";
+			}
+			var fh = sys.io.File.append(bfLogPath, false);
+			fh.writeString("[" + Date.now().toString() + "] " + text + "\n");
+			fh.close();
+		}
+		catch (e:Dynamic) {}
+		#end
 	}
 
 	public static function luaTrace(text:String, ignoreCheck:Bool = false, deprecated:Bool = false, color:FlxColor = FlxColor.WHITE)
 	{
+		if (text != null && StringTools.contains(text.toUpperCase(), "ERROR")) bfWriteLuaLog(text);
 		if (ignoreCheck || getBool('luaDebugMode'))
 		{
 			if (deprecated && !getBool('luaDeprecatedWarnings'))

@@ -311,32 +311,24 @@ class Main extends Sprite
 		);
 		SUtil.mkDirs(storageDirectory);
 		Sys.setCwd(storageDirectory);
-		// ── 大肥鱼引擎 · 启动看门狗（崩溃自愈）────────────────────────
-		// 上次启动没走完 = 有模组把启动搞崩了 → 这次先把所有模组禁用，保证能进游戏
+		// ── 大肥鱼引擎 · 启动看门狗（0.9.3 重做：不再永久禁用模组）──────────
+		// 旧版：上次没走完 → 把 modsList.txt 全部改成 |0（永久禁用，误判就全禁）
+		// 新版：上次没走完 → 只让【本次启动】跳过模组，一行都不写 modsList.txt；
+		//       走到标题画面就算成功 → 删标记 → 下次启动自动恢复正常。
 		try
 		{
 			var __bfGuard:String = storageDirectory + '.bf_boot_guard';
 			if (sys.FileSystem.exists(__bfGuard))
 			{
-				trace('[BF] 上次启动异常退出 → 自动禁用所有模组（安全模式）');
-				var __bfList:String = storageDirectory + 'modsList.txt';
-				if (sys.FileSystem.exists(__bfList))
-				{
-					var __bfOut:Array<String> = [];
-					var __bfRaw:String = sys.io.File.getContent(__bfList);
-					for (__bfLine in __bfRaw.split('\n'))
-					{
-						if (__bfLine.length < 2) continue;
-						var __bfParts:Array<String> = __bfLine.split('|');
-						if (__bfParts.length > 0) __bfOut.push(__bfParts[0] + '|0');
-					}
-					sys.io.File.saveContent(__bfList, __bfOut.join('\n') + '\n');
-					trace('[BF] 已禁用 ' + __bfOut.length + ' 个模组');
-				}
+				sys.io.File.saveContent('.bf_safe_mode', '上次启动未完成 ' + Date.now().toString());
+				trace('[BF] 上次启动异常 → 本次安全模式（不加载模组），下次启动自动恢复');
 			}
 			sys.io.File.saveContent(__bfGuard, 'booting');
 		}
 		catch (__bfE:Dynamic) { trace('[BF] guard error: ' + __bfE); }
+
+		// 读取并清除安全模式标记（只对本次启动有效）
+		general.backend.Mods.bfConsumeSafeMode();
 		// Origin's startup choice lives in the selected engine runtime folder,
 		// so reload it only after the legacy mobile storage setup has set cwd.
 		originfunkin.OriginFunkinConfig.load(true);
