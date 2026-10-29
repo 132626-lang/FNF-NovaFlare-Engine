@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
-	<app title="BigFish Engine" file="BigFish Engine" packageName="com.bigfish.engine" package="com.bigfish.engine" main="Main" version="0.9.6" build-number="17" company="BF-crew" />
+	<app title="BigFish Engine" file="BigFish Engine" packageName="com.bigfish.engine" package="com.bigfish.engine" main="Main" version="0.10.0" build-number="18" company="BF-crew" />
 
 	<!--Switch Export with Unique ApplicationID and Icon-->
 	<set name="APP_ID" value="0x0100f6c013bbc000" />

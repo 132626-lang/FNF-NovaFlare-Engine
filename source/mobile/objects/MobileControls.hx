@@ -5,11 +5,13 @@ import haxe.extern.EitherType;
 
 import mobile.flixel.input.FlxMobileInputManager;
 import mobile.flixel.FlxButton;
+import mobile.flixel.FlxArrowsPad;
 
 class MobileControls extends FlxTypedSpriteGroup<FlxMobileInputManager>
 {
 	public var virtualPad:FlxVirtualPad = new FlxVirtualPad(NONE, NONE);
 	public var hitbox:FlxHitbox = new FlxHitbox();
+	public var arrowsPad:FlxArrowsPad = new FlxArrowsPad();
 	// YOU CAN'T CHANGE PROPERTIES USING THIS EXCEPT WHEN IN RUNTIME!!
 	public var current:CurrentManager;
 
@@ -38,6 +40,8 @@ class MobileControls extends FlxTypedSpriteGroup<FlxMobileInputManager>
 			case 4: // HITBOX
 				initControler(4);
 			case 5: // KEYBOARD
+			case 6: // ARROWS_PAD (Global Slice 官方底部一排箭头)
+				initControler(6);
 		}
 		current = new CurrentManager(this);
 		// Options related stuff
@@ -69,6 +73,9 @@ class MobileControls extends FlxTypedSpriteGroup<FlxMobileInputManager>
 			case 4:
 				hitbox = new FlxHitbox();
 				add(hitbox);
+			case 6:
+				arrowsPad = new FlxArrowsPad();
+				add(arrowsPad);
 		}
 	}
 
@@ -204,6 +211,8 @@ class MobileControls extends FlxTypedSpriteGroup<FlxMobileInputManager>
 		buttonsColors.push(data.arrowRGB[1][0]);
 		buttonsColors.push(data.arrowRGB[2][0]);
 		buttonsColors.push(data.arrowRGB[3][0]);
+		if (mode == 6)
+			return;
 		if (mode == 3)
 		{
 			virtualPad.buttonLeft2.color = buttonsColors[0];
@@ -236,6 +245,14 @@ class CurrentManager
 			buttonDown = control.hitbox.buttonNotes[1];
 			buttonUp = control.hitbox.buttonNotes[2];
 			buttonRight = control.hitbox.buttonNotes[3];
+		}
+		else if (MobileControls.mode == 6)
+		{
+			target = control.arrowsPad;
+			buttonLeft = control.arrowsPad.buttonLeft;
+			buttonDown = control.arrowsPad.buttonDown;
+			buttonUp = control.arrowsPad.buttonUp;
+			buttonRight = control.arrowsPad.buttonRight;
 		}
 		else
 		{
