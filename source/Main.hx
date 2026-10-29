@@ -311,71 +311,13 @@ class Main extends Sprite
 		);
 		SUtil.mkDirs(storageDirectory);
 		Sys.setCwd(storageDirectory);
-		// 统一用绝对路径（相对路径会因工作目录变化对不上，导致看门狗永远误判）
-		var __bfRoot:String = storageDirectory;
-		if (__bfRoot.substr(-1) != '/') __bfRoot += '/';
-		general.backend.Mods.bfStorageDir = __bfRoot;
-		// ── 大肥鱼引擎 · 启动看门狗（0.9.5：绝对路径 + 误判保护）──────────────────
-// 教训：0.9.3 用相对路径写、TitleState 用相对路径删，工作目录一变就对不上，
-//       标记永远留着 → 每次启动都误判「上次崩了」→ 模组永远被跳过。
-// 现在：①全部用绝对路径 ②连续误判 3 次就当作误判，强制清标记正常启动。
-try
-{
-	var __bfGuard:String = __bfRoot + '.bf_boot_guard';
-	var __bfCountFile:String = __bfRoot + '.bf_crash_count';
-	if (sys.FileSystem.exists(__bfGuard))
-	{
-		var __bfCount:Int = 0;
-		try
-		{
-			if (sys.FileSystem.exists(__bfCountFile))
-			{
-				var __cv:String = sys.io.File.getContent(__bfCountFile).trim();
-				var __cn = Std.parseInt(__cv);
-				if (__cn != null && __cn > 0) __bfCount = __cn;
-			}
-		}
-		catch (__bfCe:Dynamic) {}
+		// ── 大肥鱼引擎 · 启动看门狗已移除（0.9.6）────────────────────────────
+// 原因：手机管家会反复 FORCE STOP 本 App（系统日志确认 reason=10/USER REQUESTED,
+//   subreason=21/FORCE STOP, "single-cleaner"）。强杀 = 启动流程没走完 = 看门狗误判
+//   「上次崩了」= 把所有模组关掉 → 出现「不管怎么弄模组都是关的」死循环。
+// 结论：在会被系统高频强杀的手机上，启动自愈弊大于利 → 整个机制删除。
+// 保留：lua-error 日志、模组自检（只读不写，无害）。
 
-		if (__bfCount >= 2)
-		{
-			// 连续第 3 次判定异常 → 99% 是误判（APP 被系统杀 / 删标记失败），别再折腾模组了
-			trace('[BF] 连续 ' + (__bfCount + 1) + ' 次判定启动异常 → 当作误判，本次正常加载模组');
-			try sys.FileSystem.deleteFile(__bfGuard) catch (__bfDe2:Dynamic) {}
-			try sys.io.File.saveContent(__bfCountFile, '0') catch (__bfCe2:Dynamic) {}
-		}
-		else
-		{
-			var __bfWho:String = '';
-			try
-			{
-				var __sus:String = __bfRoot + '.bf_suspect_mod';
-				if (sys.FileSystem.exists(__sus)) __bfWho = sys.io.File.getContent(__sus).trim();
-			}
-			catch (__bfWe:Dynamic) {}
-			if (__bfWho.length > 0)
-			{
-				sys.io.File.saveContent(__bfRoot + '.bf_safe_mode', 'mod=' + __bfWho);
-				trace('[BF] 上次启动异常，可疑模组：' + __bfWho + ' → 本次只跳过它');
-			}
-			else
-			{
-				sys.io.File.saveContent(__bfRoot + '.bf_safe_mode', 'mod=');
-				trace('[BF] 上次启动异常，不知道是哪个模组 → 本次跳过全部模组');
-			}
-			try sys.io.File.saveContent(__bfCountFile, Std.string(__bfCount + 1)) catch (__bfCe3:Dynamic) {}
-		}
-	}
-
-	sys.io.File.saveContent(__bfGuard, 'booting');
-}
-catch (__bfE:Dynamic) { trace('[BF] guard error: ' + __bfE); }
-
-		// 清理上次留下的可疑模组标记（本次已消费）
-		try { var __s2:String = __bfRoot + '.bf_suspect_mod'; if (sys.FileSystem.exists(__s2)) sys.FileSystem.deleteFile(__s2); } catch (__bfDe3:Dynamic) {}
-
-		// 读取并清除安全模式标记（只对本次启动有效）
-		general.backend.Mods.bfConsumeSafeMode();
 		// Origin's startup choice lives in the selected engine runtime folder,
 		// so reload it only after the legacy mobile storage setup has set cwd.
 		originfunkin.OriginFunkinConfig.load(true);

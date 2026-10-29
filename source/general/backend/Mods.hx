@@ -11,31 +11,8 @@ typedef ModsList =
 
 class Mods
 {
-	static public var currentModDirectory(get, set):String = '';
-	static var _currentModDirectory:String = '';
-	// 正在加载的模组名 —— 崩溃后用它定位是哪个模组把启动搞崩了
-	public static var bfSuspectMod:String = '';
-	// 引擎数据目录（绝对路径，结尾带 /）—— 所有看门狗文件都用它拼，避免相对路径对不上
-	public static var bfStorageDir:String = '';
-	static var _bfLastWritten:String = '';
+	static public var currentModDirectory:String = '';
 
-	static function get_currentModDirectory():String
-	{
-		return _currentModDirectory;
-	}
-
-	static function set_currentModDirectory(v:String):String
-	{
-		_currentModDirectory = v;
-		#if (MODS_ALLOWED && sys)
-		if (v != null && v.length > 0 && v != _bfLastWritten)
-		{
-			_bfLastWritten = v;
-			try sys.io.File.saveContent(bfStorageDir + '.bf_suspect_mod', v) catch (e:Dynamic) {}
-		}
-		#end
-		return v;
-	}
 	public static var ignoreModFolders:Array<String> = [
 		'characters',
 		'custom_events',
@@ -187,40 +164,6 @@ class Mods
 	public static var updatedOnState:Bool = false;
 
 
-	// ── 大肥鱼引擎 · 安全模式（启动看门狗升级版）────────────────────────
-	// 旧做法：上次启动没走完 → 把 modsList.txt 里所有模组改成 |0（永久禁用！）
-	//   → 在加载页被系统杀 / 内存不足 / 删标记失败，都会被误判成崩溃，
-	//     于是每次启动都把模组全禁掉（「不管崩没崩都禁模组」）。
-	// 新做法：崩溃后只在【本次启动】临时跳过模组，一行都不写 modsList.txt；
-	//   走到标题画面就算启动成功 → 删标记 → 下次启动自动恢复。
-	public static var bfSafeMode:Bool = false;
-	public static var bfSafeModeReason:String = "";
-
-	public static function bfConsumeSafeMode():Void
-	{
-		bfSafeMode = false;
-		bfSafeModeReason = "";
-		try
-		{
-			var f:String = bfStorageDir + ".bf_safe_mode";
-			if (sys.FileSystem.exists(f))
-			{
-				bfSafeMode = true;
-				try
-				{
-					bfSafeModeReason = sys.io.File.getContent(f);
-				}
-				catch (e:Dynamic) {}
-				if (bfSafeModeReason != null && StringTools.startsWith(bfSafeModeReason, 'mod='))
-					bfSuspectMod = bfSafeModeReason.substr(4).split('\n')[0].trim();
-				if (bfSuspectMod != null && bfSuspectMod.length > 0)
-					trace('[BF] 上次崩在模组：' + bfSuspectMod + '（本次只跳过它）');
-				sys.FileSystem.deleteFile(f); // 只生效这一次
-				trace("[BF] 安全模式：本次启动不加载模组（" + bfSafeModeReason + "）");
-			}
-		}
-		catch (e:Dynamic) trace("[BF] safe mode error: " + e);
-	}
 	inline public static function parseList():ModsList
 	{
 		if (!updatedOnState)
@@ -239,12 +182,7 @@ class Mods
 				var dat = mod.split("|");
 				list.all.push(dat[0]);
 				if (dat[1] == "1")
-				{
-					var __isSuspect:Bool = bfSafeMode && bfSuspectMod.length > 0 && dat[0] == bfSuspectMod;
-					var __skipAll:Bool = bfSafeMode && bfSuspectMod.length == 0;
-					if (__isSuspect || __skipAll) list.disabled.push(dat[0]);
-					else list.enabled.push(dat[0]);
-				}
+					list.enabled.push(dat[0]);
 				else
 					list.disabled.push(dat[0]);
 			}
