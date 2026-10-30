@@ -2087,7 +2087,7 @@ class FunkinLua
 
 		var callbackName:String = lastCalledFunction != null && lastCalledFunction.length > 0 ? lastCalledFunction : "unknown callback";
 		var sourceName:String = scriptName != null && scriptName.length > 0 ? scriptName : "unknown Lua script";
-		var errorText:String = "ERROR ($callbackName) [$sourceName]: $message";
+		var errorText:String = 'ERROR ($callbackName) [$sourceName]: $message';
 		if (PlayState.instance != null)
 			PlayState.instance.addTextToDebug(errorText, FlxColor.RED);
 		else
