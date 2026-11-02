@@ -266,6 +266,7 @@ class PlayState extends MusicBeatState
 	public var healthGain:Float = 1;
 	public var healthLoss:Float = 1;
 
+	// [BF] 长条永远加血：这个开关删了，保留字段但恒为 false，下面所有判断自然失效
 	public var guitarHeroSustains:Bool = false;
 	public var instakillOnMiss:Bool = false;
 	public var cpuControlled:Bool = false;
@@ -417,7 +418,7 @@ class PlayState extends MusicBeatState
 		practiceMode = ClientPrefs.getGameplaySetting('practice');
 		cpuControlled = ClientPrefs.getGameplaySetting('botplay');
 		cpuControlled_opponent = ClientPrefs.getGameplaySetting('botplay');
-		guitarHeroSustains = ClientPrefs.data.guitarHeroSustains;
+		guitarHeroSustains = false; // [BF] 不再读设置
 		if (ClientPrefs.data.playOpponent)
 			cpuControlled = ClientPrefs.data.botOpponentFix;
 
