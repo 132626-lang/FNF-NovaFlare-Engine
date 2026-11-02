@@ -31,6 +31,8 @@ import general.shaders.MobileShaderConverter;
 	public var resolution:String = 'Native';
 	public var colorblindMode:String = 'None';
 	public var lowQuality:Bool = false;
+	// [BF] 全屏模式：false=保持比例黑边, true=铺满屏幕(裁边)
+	public var fullscreenFill:Bool = false;
 	public var gameQuality:Int = #if mobile 0 #else 1 #end;
 	public var antialiasing:Bool = true;
 	public var flashing:Bool = true;
@@ -49,7 +51,6 @@ import general.shaders.MobileShaderConverter;
 	public var middleScroll:Bool = false;
 	public var flipChart:Bool = false;
 	public var ghostTapping:Bool = true;
-	public var guitarHeroSustains:Bool = true;
 	public var noReset:Bool = false;
 	// Opponent s
 	public var playOpponent:Bool = false;
