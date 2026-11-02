@@ -1,5 +1,6 @@
 General => 常规设置
 
+fullscreenFill => 开=按屏幕比例铺满（边缘裁掉一点，不拉伸不变形）；关=保持16:9，左右留黑边
 framerate => Update刷新率上限
 drawFramerate => 绘制帧数的上限，请与update上限区分
 language => 切换语言
