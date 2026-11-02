@@ -1,5 +1,6 @@
 General => General
 
+fullscreenFill => Fullscreen Fill (crop edges)
 framerate => Update Framerate Cap
 drawFramerate => Draw Framerate Cap
 lockRender => Independent Rendering
