@@ -163,6 +163,7 @@ class Main extends Sprite
 
 	private function setupGame():Void
 	{
+		BFScreen.load(); // [BF] 先读全屏设置，后面的 zoom 计算要用
 		var stageWidth:Int = Lib.current.stage.stageWidth;
 		var stageHeight:Int = Lib.current.stage.stageHeight;
 
@@ -170,7 +171,8 @@ class Main extends Sprite
 		{
 			var ratioX:Float = stageWidth / gameConfig.width;
 			var ratioY:Float = stageHeight / gameConfig.height;
-			gameConfig.zoom = Math.min(ratioX, ratioY);
+			// [BF] 全屏开关：关=保持比例(黑边)、开=填满屏幕(裁掉边缘一点点)
+			gameConfig.zoom = BFScreen.fill ? Math.max(ratioX, ratioY) : Math.min(ratioX, ratioY);
 			gameConfig.width = Math.ceil(stageWidth / gameConfig.zoom);
 			gameConfig.height = Math.ceil(stageHeight / gameConfig.zoom);
 		}
