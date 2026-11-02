@@ -23,9 +23,6 @@ class GamePlayGroup extends OptionCata
         var option:Option = new Option(this, 'ghostTapping', BOOL);
         addOption(option);
 
-        var option:Option = new Option(this, 'guitarHeroSustains', BOOL);
-        addOption(option);
-
         var option:Option = new Option(this, 'noReset', BOOL);
         addOption(option);
 
