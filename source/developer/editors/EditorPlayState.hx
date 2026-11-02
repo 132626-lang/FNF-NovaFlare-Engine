@@ -127,7 +127,7 @@ class EditorPlayState extends MusicBeatSubstate
 			FlxG.sound.music.stop();
 
 		cachePopUpScore();
-		guitarHeroSustains = ClientPrefs.data.guitarHeroSustains;
+		guitarHeroSustains = false; // [BF] 长条永远加血，不再读设置
 		if (ClientPrefs.data.hitsoundVolume > 0)
 			Paths.sound('hitsound');
 
