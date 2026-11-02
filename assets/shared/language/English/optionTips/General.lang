@@ -1,5 +1,6 @@
 General => General
 
+fullscreenFill => On = fill the screen by cropping edges (no stretching); Off = keep 16:9 with black bars
 framerate => Change your FPS cap
 drawFramerate => Sets the maximum draw frame rate independently from the update rate
 language => Change engine language
