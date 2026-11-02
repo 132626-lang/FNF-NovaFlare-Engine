@@ -1,5 +1,7 @@
 package options.groupData;
 
+import BFScreen;
+
 import lime.graphics.opengl.GL;
 import general.shaders.ColorblindFilter;
 import lime.system.Display;
@@ -17,6 +19,11 @@ class GeneralGroup extends OptionCata
 
 		var option:Option = new Option(this, 'General', TITLE);
 		addOption(option);
+
+		// [BF] 全屏模式开关（常规设置第一项）
+		var option:Option = new Option(this, 'fullscreenFill', BOOL);
+		addOption(option);
+		option.onChange = onChangefullscreenFill;
 
 		var option:Option = new Option(this, 'framerate', INT, [24, 2000, 'TPS']);
 		addOption(option);
@@ -212,4 +219,12 @@ class GeneralGroup extends OptionCata
 		MouseEffect.setUserEffectsEnabled(ClientPrefs.data.mouseTrailEffect);
 	}
 	#end
+
+	// [BF] 全屏开关变了就写文件，下次启动 setupGame 读它
+	function onChangefullscreenFill():Void
+	{
+		BFScreen.fill = ClientPrefs.data.fullscreenFill;
+		BFScreen.save();
+	}
+
 }
